@@ -1,6 +1,7 @@
 import React from 'react'
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import AddEventForm from '../add-event-form/AddEventForm';
 
 const AddEventModel = ({show, handleClose}) => {
 
@@ -11,7 +12,10 @@ const AddEventModel = ({show, handleClose}) => {
             <Modal.Header closeButton>
             <Modal.Title>Modal heading</Modal.Title>
             </Modal.Header>
-            <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+            <Modal.Body>
+                <AddEventForm>
+                </AddEventForm>
+            </Modal.Body>
             <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
                 Close
