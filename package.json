@@ -12,13 +12,17 @@
         "vite": "^3.0.0"
     },
     "dependencies": {
+        "@hookform/resolvers": "^2.9.10",
         "@reduxjs/toolkit": "^1.9.0",
         "@vitejs/plugin-react": "^2.2.0",
         "bootstrap": "^5.2.2",
+        "date-fns": "^2.29.3",
         "react": "^18.2.0",
         "react-bootstrap": "^2.6.0",
+        "react-datetime-picker": "^4.1.1",
         "react-dom": "^18.2.0",
         "react-hook-form": "^7.39.4",
-        "react-redux": "^8.0.5"
+        "react-redux": "^8.0.5",
+        "yup": "^0.32.11"
     }
 }

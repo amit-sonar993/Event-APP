@@ -36,7 +36,14 @@ class EventController extends Controller
      */
     public function store(StoreEventRequest $request)
     {
-        //
+        // Retrieve the validated input...
+        $validated = $request->safe()->all();
+        $newEvent =  Event::create($validated);        
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $newEvent
+        ], 201);
     }
 
     /**

@@ -20,7 +20,7 @@ const AddEventModel = ({show, handleClose}) => {
             <Button variant="secondary" onClick={handleClose}>
                 Close
             </Button>
-            <Button variant="primary" onClick={handleClose}>
+            <Button type="submit" variant="primary" form="event-form">
                 Save Changes
             </Button>
             </Modal.Footer>
