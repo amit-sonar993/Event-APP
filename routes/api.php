@@ -17,3 +17,4 @@ use App\Http\Controllers\EventController;
 
 
 Route::post('/events/store', [EventController::class, 'store']);
+Route::get('/events', [EventController::class, 'index']);

@@ -1,16 +1,54 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import AddEventModel from '../add-event-model/AddEventModel';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchEvents } from '../../store/actions/event';
 
 function Event() {
   const [show, setShow] = useState(false)
+  const dispatch = useDispatch()
+  const {loading, data: {data: eventData = []} = {}} = useSelector(state => state.eventReducer)
 
   const handleCloseEventModel = () => {
     setShow(false)
+  }
+
+  useEffect(() => {
+    console.log('event fetching')
+    dispatch(fetchEvents())
+  },[])
+
+  useEffect(() => {
+    console.log('events', eventData);
+  }, [eventData])
+
+
+  const renderEvents = () => {
+    return(
+      eventData.map(({title, description, start_date, end_date}, index) => {
+        return(
+            <tr key={index}>
+              <td>{index+1}</td>
+              <td>{title}</td>
+              <td>{description}</td>
+              <td>{start_date}</td>
+              <td>{end_date}</td>
+              <td>
+                <div className="btn-group" role="group" aria-label="Basic example">
+                  <button type="button" className="btn btn-secondary">Edit</button>
+                  <button type="button" className="btn btn-secondary">Middle</button>
+                  <button type="button" className="btn btn-secondary">Delete</button>
+                </div>
+
+            </td>
+            </tr>
+        )
+      })
+    )
   }
 
   return (
@@ -18,7 +56,7 @@ function Event() {
       <Container>
         <Row>
           <Col>
-          <Button onClick={() => setShow(true)}>Show Alert</Button>
+          <Button onClick={() => setShow(true)}>Add Events</Button>
           </Col>
         </Row>
         <Row className="justify-content-md-center">
@@ -27,29 +65,15 @@ function Event() {
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Username</th>
+                  <th>Title</th>
+                  <th>Description</th>
+                  <th>Start Date</th>
+                  <th>End Date</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>Mark</td>
-                  <td>Otto</td>
-                  <td>@mdo</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>Jacob</td>
-                  <td>Thornton</td>
-                  <td>@fat</td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td colSpan={2}>Larry the Bird</td>
-                  <td>@twitter</td>
-                </tr>
+                {loading ? 'Loading ....' : renderEvents()}
               </tbody>
             </Table>
           </Col>

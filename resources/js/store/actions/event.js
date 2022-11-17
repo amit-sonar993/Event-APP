@@ -13,4 +13,17 @@ const createEvents = createAsyncThunk(
     }
   )
 
-  export {createEvents}
+  const fetchEvents = createAsyncThunk(
+    'events/fetchEvents',
+    async (data) => {
+      try {
+        const response = await axios.get('/events')
+        console.log(response);
+        return response.data
+      } catch (error) {
+        return error && error.response?.data
+      }
+    }
+  )
+
+  export {createEvents, fetchEvents}
