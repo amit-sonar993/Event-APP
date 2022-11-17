@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import Event from './event/Event.jsx'
+import App from './App'
 import  store  from '../store'
 import { Provider } from 'react-redux'
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -8,7 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Provider store={store}>
-      <Event />
+      <App />
     </Provider>
   </React.StrictMode>
 )

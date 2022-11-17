@@ -5,8 +5,8 @@ import { useDispatch } from 'react-redux';
 import { createEvents } from '../../store/actions/event';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
-import { compareAsc, format } from 'date-fns'
-import lightFormat from 'date-fns/esm/fp/lightFormat/index';
+import { format } from 'date-fns'
+import { toast } from 'react-toastify';
 
 const schema = yup.object({
   title: yup.string().required(),
@@ -15,20 +15,39 @@ const schema = yup.object({
   end_date: yup.string().nullable().required(),
 }).required();
 
-const AddEventForm = () => {
+const AddEventForm = ({setSubmittng, handleClose}) => {
   const { register, handleSubmit, control, formState:{ errors }, setFocus } = useForm({
     resolver: yupResolver(schema)
   });
   const dispatch = useDispatch();
-  const onSubmit = data => {
-
+  const onSubmit = async (data) => {
     let startDate = format(new Date(data['start_date']), 'yyyy-MM-dd')
     let endDate = format(new Date(data['end_date']), 'yyyy-MM-dd')
     data['start_date'] = startDate
     data['end_date'] = endDate
 
-    console.log(data)
-    dispatch(createEvents(data))
+    setSubmittng(true)
+    let {payload} = await dispatch(createEvents(data))
+
+    if (payload && payload.status) {
+      setSubmittng(false)
+      
+      if (payload.status == 'success') {
+        handleClose()
+        toast('Events added successfully!', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+        });
+      }
+      
+      
+    }    
   };
 
 

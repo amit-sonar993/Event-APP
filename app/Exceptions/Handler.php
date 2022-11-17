@@ -52,7 +52,7 @@ class Handler extends ExceptionHandler
                 return response()->json([
                     'status' => 'fail',
                     'data' => $errors,
-                ], 401);
+                ], 422);
             }
         });
     }
