@@ -91,8 +91,25 @@ class EventController extends Controller
      * @param  \App\Models\Event  $event
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Event $event)
+    public function destroy(Event $event, $id)
     {
-        //
+        $eventFound = $event->find($id);
+        
+        if (!$eventFound) {
+            return response()->json([
+                'status' => 'fail',
+                'data' => null,
+                'status_text_code' => 'MODEL_NOT_FOUND',
+                'message' => 'Event not found!'
+            ], 404);
+        }
+
+        /* Deleting the events */
+        $eventFound->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => null
+        ], 200);
     }
 }

@@ -34,7 +34,7 @@ const AddEventForm = ({setSubmittng, handleClose}) => {
       
       if (payload.status == 'success') {
         handleClose()
-        toast('Events added successfully!', {
+        toast.success('Events added successfully!', {
             position: "top-right",
             autoClose: 5000,
             hideProgressBar: false,

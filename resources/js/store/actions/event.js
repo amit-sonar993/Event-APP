@@ -5,7 +5,6 @@ const createEvents = createAsyncThunk(
     async (data) => {
       try {
         const response = await axios.post('events/store', data)
-        console.log(response);
         return response.data
       } catch (error) {
         return error && error.response?.data
@@ -26,4 +25,16 @@ const createEvents = createAsyncThunk(
     }
   )
 
-  export {createEvents, fetchEvents}
+  const deleteEvents = createAsyncThunk(
+    'events/delete',
+    async (id) => {
+      try {
+        const response = await axios.delete(`/events/${id}/delete`)
+        return response.data
+      } catch (error) {
+        return error && error.response?.data
+      }
+    }
+  )
+
+  export {createEvents, fetchEvents, deleteEvents}

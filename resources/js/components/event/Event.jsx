@@ -6,8 +6,11 @@ import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import AddEventModel from '../add-event-model/AddEventModel';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchEvents } from '../../store/actions/event';
+import { fetchEvents, deleteEvents } from '../../store/actions/event';
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 
+const MySwal = withReactContent(Swal)
 function Event() {
   const [show, setShow] = useState(false)
   const dispatch = useDispatch()
@@ -18,18 +21,51 @@ function Event() {
   }
 
   useEffect(() => {
-    console.log('event fetching')
     dispatch(fetchEvents())
   },[])
 
-  useEffect(() => {
-    console.log('events', eventData);
-  }, [eventData])
+  const handleEventDelete = async (id) => {
+    const {payload: {status, status_text_code} = {}} = await dispatch(deleteEvents(id))
+
+    if (status == 'success') {
+      MySwal.fire(
+        'Deleted!',
+        'Your event has been deleted.',
+        'success'
+      )
+
+      /* Refreshing event list*/
+      dispatch(fetchEvents())
+    } else {
+      MySwal.fire(
+        '',
+        'Ooops something went wrong!',
+        'error'
+      )
+    }    
+   
+  }
+
+  const handleDeleteConfirm = (id) => {
+    MySwal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, cancel!',
+      reverseButtons: true,
+    }) .then((result) => {
+      if (result.isConfirmed) {
+        handleEventDelete(id)
+      }
+    })
+  }
 
 
   const renderEvents = () => {
     return(
-      eventData.map(({title, description, start_date, end_date}, index) => {
+      eventData.map(({id, title, description, start_date, end_date}, index) => {
         return(
             <tr key={index}>
               <td>{index+1}</td>
@@ -41,10 +77,9 @@ function Event() {
                 <div className="btn-group" role="group" aria-label="Basic example">
                   <button type="button" className="btn btn-secondary">Edit</button>
                   <button type="button" className="btn btn-secondary">Middle</button>
-                  <button type="button" className="btn btn-secondary">Delete</button>
+                  <button type="button" className="btn btn-secondary" onClick={()=> handleDeleteConfirm(id)}>Delete</button>
                 </div>
-
-            </td>
+              </td>
             </tr>
         )
       })
@@ -73,13 +108,14 @@ function Event() {
                 </tr>
               </thead>
               <tbody>
-                {loading ? 'Loading ....' : renderEvents()}
+                {loading ? <tr><td>Loading ....</td></tr> : renderEvents()}
               </tbody>
             </Table>
           </Col>
         </Row>
       </Container>
       <AddEventModel show={show} handleClose={handleCloseEventModel}/>
+      {/* <SweetAlert2 {...swalProps} /> */}
     </div>
   )
 }
