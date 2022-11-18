@@ -3,7 +3,7 @@
 ## About Event app
 
 This app lets you create and manage events.
-It is build using Laravel php framework, verion 9 in backend and react in frontend
+It is build using php Laravel Framework 9.39.0 in backend and react in frontend
 
 
 ## How to Install and Run the Project
@@ -29,5 +29,7 @@ It is build using Laravel php framework, verion 9 in backend and react in fronte
 - run  `` php artisan migrate `` to create database tables
 
 - Run this command to start dev server `` php artisan serve`` or configure virtual host 
+
+### For Frontend react app no need to do anything as build files are added in version control 
 
 
