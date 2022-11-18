@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import {default as BPagination} from 'react-bootstrap/Pagination';
 
-const Pagination = ({meta: {last_page, current_page}, fetchPage}) => {
+const Pagination = ({meta: {last_page, current_page, total}, fetchPage}) => {
 
 
     const renderPageItems = () => {
@@ -37,7 +37,7 @@ const Pagination = ({meta: {last_page, current_page}, fetchPage}) => {
     
   return (
     <BPagination>
-        {renderPageItems()}
+        {last_page > 1 && renderPageItems()}
     </BPagination>
   )
 }
