@@ -4,20 +4,25 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
-import AddEventModel from '../add-event-model/AddEventModel';
+import EventModel from '../event-model/EventModel';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchEvents, deleteEvents } from '../../store/actions/event';
+import { createEvents } from '../../store/actions/event';
+import AddEventForm from '../add-event-form/AddEventForm';
+import { format } from 'date-fns'
+import { toast } from 'react-toastify';
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 
 const MySwal = withReactContent(Swal)
 function Event() {
-  const [show, setShow] = useState(false)
+  const [eventAddSubmittng, setEventAddSubmittng] = useState(false)
+  const [showEventAddModel, setShowEventAddModel] = useState(false)
   const dispatch = useDispatch()
   const {loading, data: {data: eventData = []} = {}} = useSelector(state => state.eventReducer)
 
-  const handleCloseEventModel = () => {
-    setShow(false)
+  const handleCloseEventAddModel = () => {
+    setShowEventAddModel(false)
   }
 
   useEffect(() => {
@@ -76,7 +81,6 @@ function Event() {
               <td>
                 <div className="btn-group" role="group" aria-label="Basic example">
                   <button type="button" className="btn btn-secondary">Edit</button>
-                  <button type="button" className="btn btn-secondary">Middle</button>
                   <button type="button" className="btn btn-secondary" onClick={()=> handleDeleteConfirm(id)}>Delete</button>
                 </div>
               </td>
@@ -86,12 +90,42 @@ function Event() {
     )
   }
 
+  /* Event store */
+  const handleEventAdd = async (data) => {
+    let startDate = format(new Date(data['start_date']), 'yyyy-MM-dd')
+    let endDate = format(new Date(data['end_date']), 'yyyy-MM-dd')
+    data['start_date'] = startDate
+    data['end_date'] = endDate
+
+    setEventAddSubmittng(true)
+    let {payload} = await dispatch(createEvents(data))
+
+    if (payload && payload.status) {
+      setEventAddSubmittng(false)
+      
+      if (payload.status == 'success') {
+        handleCloseEventAddModel()
+        toast.success('Events added successfully!', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+        });
+      }
+      
+    }    
+  }
+
   return (
     <div className="App">
       <Container>
         <Row>
           <Col>
-          <Button onClick={() => setShow(true)}>Add Events</Button>
+            <Button onClick={() => setShowEventAddModel(true)}>Add Events</Button>
           </Col>
         </Row>
         <Row className="justify-content-md-center">
@@ -114,7 +148,11 @@ function Event() {
           </Col>
         </Row>
       </Container>
-      <AddEventModel show={show} handleClose={handleCloseEventModel}/>
+      <EventModel show={showEventAddModel} handleClose={handleCloseEventAddModel} submitting={eventAddSubmittng}>
+        <AddEventForm
+                    onSubmit={handleEventAdd}
+                />
+      </EventModel>
       {/* <SweetAlert2 {...swalProps} /> */}
     </div>
   )

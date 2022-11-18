@@ -3,8 +3,7 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import AddEventForm from '../add-event-form/AddEventForm';
 
-const AddEventModel = ({show, handleClose}) => {
-    const [submitting, setSubmittng] = useState(false)
+const EventModel = ({show, handleClose, children, submitting}) => {
 
   return (
     <div>
@@ -13,10 +12,7 @@ const AddEventModel = ({show, handleClose}) => {
             <Modal.Title>Modal heading</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <AddEventForm 
-                    setSubmittng={setSubmittng}
-                    handleClose={handleClose}
-                />
+                {children}
             </Modal.Body>
             <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
@@ -31,4 +27,4 @@ const AddEventModel = ({show, handleClose}) => {
   )
 }
 
-export default AddEventModel
+export default EventModel
