@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use Illuminate\Http\Request;
 use App\Http\Requests\StoreEventRequest;
 use App\Http\Requests\UpdateEventRequest;
 
@@ -13,10 +14,32 @@ class EventController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $filter = $request->query('filter');
+        $todayDate = date('Y-m-d');
+        $date7DayFromNow = date("Y-m-d", strtotime("+ 7 day"));
+        $last7DayDate = date("Y-m-d", strtotime("- 7 day"));
 
-        $events = Event::paginate(10);
+        $events = Event::where(function($query) use ($filter, $todayDate, $date7DayFromNow, $last7DayDate){
+            if ($filter == 'finished_events') {
+                $query->where('end_date', '<', $todayDate);
+            }
+
+            if ($filter == "upcoming_events") {
+                $query->where('start_date', '>', $todayDate);
+            }
+
+            if ($filter == "upcoming_7_days_events") {
+                $query->where('start_date', '>', $todayDate);
+                $query->where('start_date', '<=', $date7DayFromNow);
+            }
+
+            if ($filter == "last_7_days_finished_events") {
+                $query->where('end_date', '<', $todayDate);
+                $query->where('start_date', '>=', $last7DayDate);
+            }
+        })->orderBy('start_date', 'asc')->paginate(10);
         return response()->json([
             'status' => 'success',
             'data' => $events

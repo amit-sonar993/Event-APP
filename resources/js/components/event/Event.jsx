@@ -11,25 +11,43 @@ import EventForm from '../event-form/EventForm';
 import { format } from 'date-fns'
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2'
+import Select from 'react-select';
 import withReactContent from 'sweetalert2-react-content'
 
 const MySwal = withReactContent(Swal)
+const options = [
+  { value: 'all', label: 'All'},
+  { value: 'finished_events', label: 'Finished events' },
+  { value: 'upcoming_events', label: ' Upcoming events' },
+  { value: 'upcoming_7_days_events', label: 'Upcoming events within 7 days' },
+  { value: 'last_7_days_finished_events', label: 'Finished events of the last 7 days'}
+];
+
 function Event() {
   const [eventAddSubmittng, setEventAddSubmittng] = useState(false)
   const [showEventAddModel, setShowEventAddModel] = useState(false)
   const [showEventEditModel, setShowEventEditModel] = useState(false)
   const [eventEditData, setEventEditData] = useState({})
   const [eventUpdateSubmittng, setEventUpdateSubmittng] = useState(false)
+  const [selectedFilterOption, setSelectedFilterOption] = useState({ value: 'all', label: 'All'});
   const dispatch = useDispatch()
-  const {loading, data: eventData} = useSelector(state => state.eventReducer)
+  const {loading, data: eventData = []} = useSelector(state => state.eventReducer)
 
   const handleCloseEventAddModel = () => {
     setShowEventAddModel(false)
   }
 
+
   useEffect(() => {
-    dispatch(fetchEvents())
-  },[])
+    console.log('selectedFilterOption', selectedFilterOption);
+    fetchEventList()
+  },[selectedFilterOption])
+
+
+  /* Event list */
+  const fetchEventList = () => {
+    dispatch(fetchEvents(selectedFilterOption))
+  }
 
 
   /* Event delete */
@@ -44,7 +62,7 @@ function Event() {
       )
 
       /* Refreshing event list*/
-      dispatch(fetchEvents())
+      fetchEventList()
     } else {
       MySwal.fire(
         '',
@@ -86,7 +104,7 @@ function Event() {
       setEventAddSubmittng(false)
       
       if (payload.status == 'success') {
-        dispatch(fetchEvents())
+        fetchEventList()
         handleCloseEventAddModel()
         
         toast.success('Events added successfully!', {
@@ -138,7 +156,7 @@ function Event() {
       setEventAddSubmittng(false)
       
       if (payload.status == 'success') {
-        dispatch(fetchEvents())
+        fetchEventList()
         handleCloseEventEditModel()
         toast.success('Events updated successfully!', {
             position: "top-right",
@@ -189,8 +207,15 @@ function Event() {
   return (
     <div className="App">
       <Container>
-        <Row>
-          <Col>
+        <Row className="justify-content-end">
+          <Col className="col-2">
+            <Select
+                defaultValue={selectedFilterOption}
+                onChange={setSelectedFilterOption}
+                options={options}
+              />
+          </Col>
+          <Col className="col-2">
             <Button onClick={() => setShowEventAddModel(true)}>Add Events</Button>
           </Col>
         </Row>

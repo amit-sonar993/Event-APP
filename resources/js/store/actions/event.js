@@ -14,10 +14,13 @@ const createEvents = createAsyncThunk(
 
   const fetchEvents = createAsyncThunk(
     'events/fetchEvents',
-    async (data) => {
+    async (selectedFilterOption) => {
       try {
-        const response = await axios.get('/events')
-        console.log(response);
+        const response = await axios.get('/events', {
+          params: {
+            filter: selectedFilterOption.value
+          }
+        })
         return response.data
       } catch (error) {
         return error && error.response?.data
