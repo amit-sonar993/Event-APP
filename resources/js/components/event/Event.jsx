@@ -6,9 +6,8 @@ import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import EventModel from '../event-model/EventModel';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchEvents, deleteEvents } from '../../store/actions/event';
-import { createEvents } from '../../store/actions/event';
-import AddEventForm from '../add-event-form/AddEventForm';
+import { createEvents, updateEvents, fetchEvents, deleteEvents } from '../../store/actions/event';
+import EventForm from '../event-form/EventForm';
 import { format } from 'date-fns'
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2'
@@ -18,8 +17,11 @@ const MySwal = withReactContent(Swal)
 function Event() {
   const [eventAddSubmittng, setEventAddSubmittng] = useState(false)
   const [showEventAddModel, setShowEventAddModel] = useState(false)
+  const [showEventEditModel, setShowEventEditModel] = useState(false)
+  const [eventEditData, setEventEditData] = useState({})
+  const [eventUpdateSubmittng, setEventUpdateSubmittng] = useState(false)
   const dispatch = useDispatch()
-  const {loading, data: {data: eventData = []} = {}} = useSelector(state => state.eventReducer)
+  const {loading, data: eventData} = useSelector(state => state.eventReducer)
 
   const handleCloseEventAddModel = () => {
     setShowEventAddModel(false)
@@ -29,6 +31,8 @@ function Event() {
     dispatch(fetchEvents())
   },[])
 
+
+  /* Event delete */
   const handleEventDelete = async (id) => {
     const {payload: {status, status_text_code} = {}} = await dispatch(deleteEvents(id))
 
@@ -68,30 +72,8 @@ function Event() {
   }
 
 
-  const renderEvents = () => {
-    return(
-      eventData.map(({id, title, description, start_date, end_date}, index) => {
-        return(
-            <tr key={index}>
-              <td>{index+1}</td>
-              <td>{title}</td>
-              <td>{description}</td>
-              <td>{start_date}</td>
-              <td>{end_date}</td>
-              <td>
-                <div className="btn-group" role="group" aria-label="Basic example">
-                  <button type="button" className="btn btn-secondary">Edit</button>
-                  <button type="button" className="btn btn-secondary" onClick={()=> handleDeleteConfirm(id)}>Delete</button>
-                </div>
-              </td>
-            </tr>
-        )
-      })
-    )
-  }
-
   /* Event store */
-  const handleEventAdd = async (data) => {
+  const handleEventAddSubmit = async (data) => {
     let startDate = format(new Date(data['start_date']), 'yyyy-MM-dd')
     let endDate = format(new Date(data['end_date']), 'yyyy-MM-dd')
     data['start_date'] = startDate
@@ -104,7 +86,9 @@ function Event() {
       setEventAddSubmittng(false)
       
       if (payload.status == 'success') {
+        dispatch(fetchEvents())
         handleCloseEventAddModel()
+        
         toast.success('Events added successfully!', {
             position: "top-right",
             autoClose: 5000,
@@ -119,6 +103,88 @@ function Event() {
       
     }    
   }
+
+  /* Event edit */
+  const handleCloseEventEditModel = () => {
+    setShowEventEditModel(false)
+  }
+
+  const handleShowEventEditModel = (id) => {
+    let event = eventData.filter((event) => event.id == id).shift()
+
+    if (event) {
+      let startDate = new Date(event.start_date)
+      let endDate = new Date(event.end_date)
+
+      setEventEditData({...event, start_date: startDate, end_date: endDate})
+
+      setShowEventEditModel(true)
+    }
+  }
+
+  const handleEventUpdateSubmit = async (data) => {
+    console.log('update data', data)
+
+    let startDate = format(new Date(data['start_date']), 'yyyy-MM-dd')
+    let endDate = format(new Date(data['end_date']), 'yyyy-MM-dd')
+    data['start_date'] = startDate
+    data['end_date'] = endDate
+
+    setEventUpdateSubmittng(true)
+    let {payload} = await dispatch(updateEvents(data))
+    setEventUpdateSubmittng(false)
+
+    if (payload && payload.status) {
+      setEventAddSubmittng(false)
+      
+      if (payload.status == 'success') {
+        dispatch(fetchEvents())
+        handleCloseEventEditModel()
+        toast.success('Events updated successfully!', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+        });
+      }
+      
+    }   
+  }
+
+
+  const renderEvents = () => {
+    return(
+      eventData.map(({id, title, description, start_date, end_date}, index) => {
+        return(
+            <tr key={index}>
+              <td>{index+1}</td>
+              <td>{title}</td>
+              <td>{description}</td>
+              <td>{start_date}</td>
+              <td>{end_date}</td>
+              <td>
+                <div className="btn-group" role="group" aria-label="Basic example">
+                  <button 
+                    type="button" 
+                    className="btn btn-secondary ml-5"
+                    onClick={() => { handleShowEventEditModel(id) }}
+                  >
+                    Edit
+                  </button>
+                  <button type="button" className="btn btn-danger" onClick={()=> handleDeleteConfirm(id)}>Delete</button>
+                </div>
+              </td>
+            </tr>
+        )
+      })
+    )
+  }
+
+
 
   return (
     <div className="App">
@@ -148,12 +214,19 @@ function Event() {
           </Col>
         </Row>
       </Container>
-      <EventModel show={showEventAddModel} handleClose={handleCloseEventAddModel} submitting={eventAddSubmittng}>
-        <AddEventForm
-                    onSubmit={handleEventAdd}
+      <EventModel name="Create Events" show={showEventAddModel} handleClose={handleCloseEventAddModel} submitting={eventAddSubmittng}>
+        <EventForm
+                    onSubmit={handleEventAddSubmit}
                 />
       </EventModel>
-      {/* <SweetAlert2 {...swalProps} /> */}
+
+      <EventModel name="Edit Event" show={showEventEditModel} handleClose={handleCloseEventEditModel} submitting={eventUpdateSubmittng}>
+        <EventForm
+          data={eventEditData}
+          onSubmit={handleEventUpdateSubmit}
+        />
+      </EventModel>
+      
     </div>
   )
 }

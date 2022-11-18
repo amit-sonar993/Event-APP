@@ -25,6 +25,19 @@ const createEvents = createAsyncThunk(
     }
   )
 
+
+  const updateEvents = createAsyncThunk(
+    'events/update',
+    async (data) => {
+      try {
+        const response = await axios.put(`/events/${data.id}/update`, data)
+        return response.data
+      } catch (error) {
+        return error && error.response?.data
+      }
+    }
+  )
+
   const deleteEvents = createAsyncThunk(
     'events/delete',
     async (id) => {
@@ -37,4 +50,4 @@ const createEvents = createAsyncThunk(
     }
   )
 
-  export {createEvents, fetchEvents, deleteEvents}
+  export {createEvents, fetchEvents, deleteEvents, updateEvents}

@@ -12,11 +12,11 @@ const schema = yup.object({
   end_date: yup.string().nullable().required(),
 }).required();
 
-const AddEventForm = ({setSubmittng, handleClose, onSubmit}) => {
+const EventForm = ({onSubmit, data}) => {
   const { register, handleSubmit, control, formState:{ errors }, setFocus } = useForm({
-    resolver: yupResolver(schema)
+    resolver: yupResolver(schema),
+    defaultValues: data
   });
-  const dispatch = useDispatch();
 
 
   return (
@@ -44,6 +44,7 @@ const AddEventForm = ({setSubmittng, handleClose, onSubmit}) => {
                   onChange={field.onChange}
                   innerRef={ref}
                   format="y-MM-dd"
+                  className="form-control"
                 />
               );
             }}
@@ -62,6 +63,7 @@ const AddEventForm = ({setSubmittng, handleClose, onSubmit}) => {
                   onChange={field.onChange}
                   innerRef={ref}
                   format="y-MM-dd"
+                  className="form-control"
                 />
               );
             }}
@@ -73,4 +75,4 @@ const AddEventForm = ({setSubmittng, handleClose, onSubmit}) => {
   )
 }
 
-export default AddEventForm
+export default EventForm

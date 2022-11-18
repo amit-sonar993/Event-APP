@@ -17,5 +17,6 @@ use App\Http\Controllers\EventController;
 
 
 Route::post('/events/store', [EventController::class, 'store']);
+Route::put('/events/{event}/update', [EventController::class, 'update']);
 Route::delete('/events/{id}/delete', [EventController::class, 'destroy']);
 Route::get('/events', [EventController::class, 'index']);

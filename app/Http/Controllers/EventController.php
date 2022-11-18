@@ -82,7 +82,22 @@ class EventController extends Controller
      */
     public function update(UpdateEventRequest $request, Event $event)
     {
-        //
+        $validated = $request->safe()->only(['title', 'description', 'start_date', 'end_date']);
+
+        $updated =  $event->update($validated);        
+
+        if($updated){
+            return response()->json([
+                'status' => 'success',
+                'data' => $event
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 'fail',
+                'data' => null,
+                'message' => 'Something went worng!'
+            ], 404);
+        } 
     }
 
     /**

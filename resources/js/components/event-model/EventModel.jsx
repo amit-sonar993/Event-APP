@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from 'react'
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import AddEventForm from '../add-event-form/AddEventForm';
 
-const EventModel = ({show, handleClose, children, submitting}) => {
+const EventModel = ({name, show, handleClose, children, submitting}) => {
 
   return (
     <div>
         <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
-            <Modal.Title>Modal heading</Modal.Title>
+            <Modal.Title>{name}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 {children}

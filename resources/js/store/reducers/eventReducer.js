@@ -13,7 +13,7 @@ const eventReducer = createReducer(initialState, (builder) => {
     })
     .addCase(fetchEvents.fulfilled, (state, {payload}) => {
         state.loading = false
-        state.data = payload.data
+        state.data = payload.data?.data
     })
     .addCase(fetchEvents.rejected, (state, action) => {
         state.loading = false
