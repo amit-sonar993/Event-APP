@@ -13,6 +13,7 @@ import { toast } from 'react-toastify';
 import Swal from 'sweetalert2'
 import Select from 'react-select';
 import withReactContent from 'sweetalert2-react-content'
+import Pagination from '../common/pagination/Pagination';
 
 const MySwal = withReactContent(Swal)
 const options = [
@@ -31,7 +32,7 @@ function Event() {
   const [eventUpdateSubmittng, setEventUpdateSubmittng] = useState(false)
   const [selectedFilterOption, setSelectedFilterOption] = useState({ value: 'all', label: 'All'});
   const dispatch = useDispatch()
-  const {loading, data: eventData = []} = useSelector(state => state.eventReducer)
+  const {loading, data: eventData = [], paginationMeta} = useSelector(state => state.eventReducer)
 
   const handleCloseEventAddModel = () => {
     setShowEventAddModel(false)
@@ -39,14 +40,14 @@ function Event() {
 
 
   useEffect(() => {
-    console.log('selectedFilterOption', selectedFilterOption);
+    console.log('paginationMeta', paginationMeta);
     fetchEventList()
   },[selectedFilterOption])
 
 
   /* Event list */
-  const fetchEventList = () => {
-    dispatch(fetchEvents(selectedFilterOption))
+  const fetchEventList = (page = 1) => {
+    dispatch(fetchEvents({page, selectedFilterOption}))
   }
 
 
@@ -236,6 +237,7 @@ function Event() {
                 {loading ? <tr><td>Loading ....</td></tr> : renderEvents()}
               </tbody>
             </Table>
+            <Pagination meta={paginationMeta} fetchPage={fetchEventList}></Pagination>
           </Col>
         </Row>
       </Container>

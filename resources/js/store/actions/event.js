@@ -14,10 +14,11 @@ const createEvents = createAsyncThunk(
 
   const fetchEvents = createAsyncThunk(
     'events/fetchEvents',
-    async (selectedFilterOption) => {
+    async ({page, selectedFilterOption}) => {
       try {
         const response = await axios.get('/events', {
           params: {
+            page: page,
             filter: selectedFilterOption.value
           }
         })
